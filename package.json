@@ -1,0 +1,32 @@
+{
+  "name": "parcel-react-client-starter",
+  "private": true,
+  "version": "0.0.0",
+  "source": "src/index.html",
+  "scripts": {
+    "dev": "parcel",
+    "build": "parcel build --public-url ."
+  },
+  "dependencies": {
+    "@babel/runtime": "^7.28.4",
+    "@uiw/react-color": "^2.9.2",
+    "moment": "^2.30.1",
+    "react": "^19.1.0",
+    "react-color": "^2.19.3",
+    "react-dom": "^19.1.0"
+  },
+  "devDependencies": {
+    "@parcel/transformer-sass": "2.16.1",
+    "@parcel/transformer-svg-jsx": "^2.16.1",
+    "@parcel/transformer-svg-react": "^2.16.1",
+    "@types/exif-js": "^2.3.1",
+    "@types/react": "^19.0.0",
+    "@types/react-color": "^3.0.13",
+    "@types/react-dom": "^19.0.0",
+    "parcel": "^2.14.0",
+    "svgo": "^3"
+  },
+  "@parcel/resolver-default": {
+    "packageExports": true
+  }
+}
