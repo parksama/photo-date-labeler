@@ -6,9 +6,9 @@
   "scripts": {
 	"predev": "rimraf dist",
     "dev": "parcel",
-	"prebuild": "predev",
+	"prebuild": "npm run predev",
     "build": "parcel build --public-url .",
-	"predeploy": "build",
+	"predeploy": "npm run build",
     "deploy": "gh-pages -d dist"
   },
   "dependencies": {
