@@ -7,7 +7,7 @@ import DownloadIcon from './img/download.svg';
 import { canvas_to_blob, get_option, months_to_text, set_option } from './helpers';
 
 declare var EXIF: ExifStatic;
-declare var moment: (date: any) => Moment;
+declare var moment: (date?: any) => Moment;
 declare var init_zoom: (el: HTMLDivElement, options: Object) => void;
 
 const IMAGE_QUALITY = 0.9;
@@ -45,7 +45,7 @@ export function App() {
 	const [fillColor, setFillColor] = useState(get_option('fillColor', '#ffffff'));
 	const [strokeColor, setStrokeColor] = useState(get_option('strokeColor', '#000000'));
 	const [outline, setOutline] = useState(get_option('outline', 'true') === 'true');
-	const [compareDate, setCompareDate] = useState(get_option('compareDate', '2019-10-01'));
+	const [compareDate, setCompareDate] = useState(get_option('compareDate', ''));
 	const [font, setFont] = useState(get_option('font', 'Quantico'));
 
 	const [resultURL, setResultURL] = useState('');
@@ -55,11 +55,20 @@ export function App() {
 			return '';
 		}
 
-		var dateCompare = moment(compareDate);
+		var suffix = '';
 
-		var months = Math.abs(photoDate.diff(dateCompare, 'months'));
-		var suffix = months ? months_to_text(months) : `${photoDate.diff(dateCompare, 'days')} HARI`;
-		var phototext = `${photoDate.format('DD-MM-YYYY')} - ${suffix}`;
+		if (compareDate) {
+			var dateCompare = moment(compareDate);
+			var months = Math.abs(photoDate.diff(dateCompare, 'months'));
+			suffix = months ? months_to_text(months) : `${photoDate.diff(dateCompare, 'days')} HARI`;
+		}
+
+		var phototext = photoDate.format('DD-MM-YYYY');
+
+		if (suffix) {
+			phototext += ' - ' + suffix;
+		}
+
 		return phototext;
 	}, [photoDate, compareDate]);
 
@@ -171,7 +180,12 @@ export function App() {
 			onDrop={handleFileDrop}
 			onDragOver={(event) => event.preventDefault()}
 			onDragEnter={() => setIsDragging(true)}
-			onDragLeave={() => setIsDragging(false)}
+			onDragLeave={(event) => {
+				event.preventDefault();
+				if (!event.currentTarget.contains(event.relatedTarget as Node)) {
+					setIsDragging(false);
+				}
+			}}
 		>
 			<div className="container py-5">
 				<h1 className="mb-4 font-Quantico">Photo Date Labeler</h1>
@@ -227,7 +241,7 @@ export function App() {
 													overflowY: 'auto',
 												}}
 											>
-												{JSON.stringify(filedata, null, 2)}
+												{JSON.stringify(filedata, null, "\t")}
 											</div>
 										</div>
 									</div>
