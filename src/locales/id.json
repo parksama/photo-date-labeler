@@ -1,0 +1,23 @@
+{
+  "appTitle": "Pelabel Tanggal Foto",
+  "dropImageHere": "Jatuhkan gambar di sini.",
+  "dragAndDropOrClick": "Seret dan jatuhkan atau klik di sini untuk memilih gambar.",
+  "download": "Unduh",
+  "settings": "Pengaturan",
+  "font": "Huruf",
+  "fillColor": "Warna Isian",
+  "strokeColor": "Warna Garis",
+  "outline": "Garis Tepi",
+  "compareDate": "Tanggal Perbandingan",
+  "photoDate": "Tanggal Foto",
+  "render": "Render",
+  "exifData": "Data EXIF",
+  "language": "Bahasa",
+  "textColor": "Warna Teks",
+  "year": "TAHUN",
+  "year_other": "TAHUN",
+  "month": "BULAN",
+  "month_other": "BULAN",
+  "day": "HARI",
+  "day_other": "HARI"
+}

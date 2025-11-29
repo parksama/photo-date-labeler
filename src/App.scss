@@ -1,10 +1,9 @@
 @font-face {
-    font-family: 'Digital-7';
-    src: url('fonts/Digital-7.woff2') format('woff2'),
-        url('fonts/Digital-7.woff') format('woff');
-    font-weight: normal;
-    font-style: normal;
-    font-display: swap;
+	font-family: "Digital-7";
+	src: url("fonts/Digital-7.woff2") format("woff2"), url("fonts/Digital-7.woff") format("woff");
+	font-weight: normal;
+	font-style: normal;
+	font-display: swap;
 }
 
 .App {
@@ -38,7 +37,7 @@ img {
 // 	font-family: 'Digital-7';
 // }
 
-$fonts: 'sans-serif', 'serif', 'monospace', 'cursive', 'fantasy', 'Digital-7', 'Orbitron', 'Quantico';
+$fonts: "sans-serif", "serif", "monospace", "cursive", "fantasy", "Digital-7", "Orbitron", "Quantico";
 
 @each $font in $fonts {
 	.font-#{$font} {
@@ -62,4 +61,8 @@ $fonts: 'sans-serif', 'serif', 'monospace', 'cursive', 'fantasy', 'Digital-7', '
 		align-items: center;
 		column-gap: 0.25em;
 	}
+}
+
+iframe {
+	color-scheme: auto;
 }

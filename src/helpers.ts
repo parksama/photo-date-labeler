@@ -1,3 +1,6 @@
+import i18n from "./i18n";
+const { t } = i18n;
+
 const OPTIONS_PREFIX = 'photolabel_';
 
 export function get_option(key: string, defaultValue: string) {
@@ -13,12 +16,15 @@ export function months_to_text(months: number) {
 	var remainingMonths = months % 12;
 	var text = '';
 
+	var yearText = t('year', 'YEAR', { count: years });
+	var monthText = t('month', 'MONTH', { count: remainingMonths });
+
 	if (years) {
-		text += `${years} TAHUN `;
+		text += `${years} ${yearText} `;
 	}
 
 	if (remainingMonths) {
-		text += `${remainingMonths} BULAN`;
+		text += `${remainingMonths} ${monthText}`;
 	}
 
 	return text;

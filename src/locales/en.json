@@ -1,0 +1,23 @@
+{
+  "appTitle": "Photo Date Labeler",
+  "dropImageHere": "Drop the image here.",
+  "dragAndDropOrClick": "Drag and drop or click here to select an image.",
+  "download": "Download",
+  "settings": "Settings",
+  "font": "Font",
+  "fillColor": "Fill Color",
+  "strokeColor": "Stroke Color",
+  "outline": "Outline",
+  "compareDate": "Compare Date",
+  "photoDate": "Photo Date",
+  "render": "Render",
+  "exifData": "EXIF Data",
+  "language": "Language",
+  "textColor": "Text Color",
+  "year": "YEAR",
+  "year_other": "YEARS",
+  "month": "MONTH",
+  "month_other": "MONTHS",
+  "day": "DAY",
+  "day_other": "DAYS"
+}

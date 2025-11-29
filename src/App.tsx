@@ -5,6 +5,7 @@ import type { Moment } from 'moment';
 import { Sketch } from '@uiw/react-color';
 import DownloadIcon from './img/download.svg';
 import { canvas_to_blob, get_option, months_to_text, set_option } from './helpers';
+import { useTranslation } from 'react-i18next';
 
 declare var EXIF: ExifStatic;
 declare var moment: (date?: any) => Moment;
@@ -47,6 +48,13 @@ export function App() {
 	const [outline, setOutline] = useState(get_option('outline', 'true') === 'true');
 	const [compareDate, setCompareDate] = useState(get_option('compareDate', ''));
 	const [font, setFont] = useState(get_option('font', 'Quantico'));
+	const { t, i18n } = useTranslation();
+
+	// Initialize language from saved preference
+	useEffect(() => {
+		const savedLanguage = get_option('language', 'en');
+		i18n.changeLanguage(savedLanguage);
+	}, [i18n]);
 
 	const [resultURL, setResultURL] = useState('');
 
@@ -60,7 +68,13 @@ export function App() {
 		if (compareDate) {
 			var dateCompare = moment(compareDate);
 			var months = Math.abs(photoDate.diff(dateCompare, 'months'));
-			suffix = months ? months_to_text(months) : `${photoDate.diff(dateCompare, 'days')} HARI`;
+
+			if (months) {
+				suffix = months_to_text(months);
+			} else {
+				var days = Math.abs(photoDate.diff(dateCompare, 'days'));
+				suffix = `${days} ${t('day', 'DAY', { count: days })}`;
+			}
 		}
 
 		var phototext = photoDate.format('DD-MM-YYYY');
@@ -70,7 +84,7 @@ export function App() {
 		}
 
 		return phototext;
-	}, [photoDate, compareDate]);
+	}, [photoDate, compareDate, i18n.language]);
 
 	const get_file_info = async (file: File) => {
 		var regname = /img-(\d{8})/i.exec(file.name);
@@ -188,7 +202,22 @@ export function App() {
 			}}
 		>
 			<div className="container py-5">
-				<h1 className="mb-4 font-Quantico">Photo Date Labeler</h1>
+				<div className="row align-items-end justify-content-between mb-4 gy-4">
+					<div className="col">
+						<h1 className="mb-0 font-Quantico">{t('appTitle', 'Photo Date Labeler')}</h1>
+					</div>
+					<div className="col-auto d-flex">
+						<iframe
+							src="https://ghbtns.com/github-btn.html?user=parksama&repo=photo-date-labeler&type=star&count=false&size=large"
+							width="72"
+							height="30"
+							title="GitHub"
+							loading="lazy"
+							className="me-2"
+						></iframe>
+						<LanguageSwitcher />
+					</div>
+				</div>
 				<div className="row gy-4">
 					<div className="col-md-6">
 						{!file ? (
@@ -200,9 +229,11 @@ export function App() {
 								onClick={() => fileinputref.current?.click()}
 							>
 								{isDragging ? (
-									<p>Drop the image here</p>
+									<p>{t('dropImageHere', 'Drop the image here')}</p>
 								) : (
-									<p className="text-center">Drag and drop or click here to select an image.</p>
+									<p className="text-center">
+										{t('dragAndDropOrClick', 'Drag and drop or click here to select an image.')}
+									</p>
 								)}
 							</div>
 						) : (
@@ -225,7 +256,7 @@ export function App() {
 												aria-expanded="true"
 												aria-controls="collapseEXIF"
 											>
-												EXIF Data
+												{t('exifData', 'EXIF Data')}
 											</button>
 										</h2>
 										<div
@@ -241,7 +272,7 @@ export function App() {
 													overflowY: 'auto',
 												}}
 											>
-												{JSON.stringify(filedata, null, "\t")}
+												{JSON.stringify(filedata, null, '\t')}
 											</div>
 										</div>
 									</div>
@@ -253,7 +284,7 @@ export function App() {
 							<div className="col">
 								<div className="mb-3">
 									<label htmlFor="photoDate" className="form-label">
-										Photo Date
+										{t('photoDate', 'Photo Date')}
 									</label>
 									<input
 										type="date"
@@ -266,7 +297,7 @@ export function App() {
 							<div className="col">
 								<div className="mb-3">
 									<label htmlFor="compareDate" className="form-label">
-										Compare Date
+										{t('compareDate', 'Compare Date')}
 									</label>
 									<input
 										type="date"
@@ -282,9 +313,7 @@ export function App() {
 						<div className="row">
 							<div className="col">
 								<div className="mb-3">
-									<label htmlFor="color" className="form-label">
-										Text Color
-									</label>
+									<label className="form-label">{t('textColor', 'Text Color')}</label>
 									<div>
 										<Sketch
 											color={fillColor}
@@ -307,7 +336,7 @@ export function App() {
 											id="outline"
 										/>
 										<label className="form-check-label" htmlFor="outline">
-											Text Outline
+											{t('outline', 'Outline')}
 										</label>
 									</div>
 									{outline && (
@@ -323,7 +352,7 @@ export function App() {
 
 						<div className="mb-3">
 							<label htmlFor="font" className="form-label">
-								Font
+								{t('font', 'Font')}
 							</label>
 							<div className="row align-items-center">
 								<div className="col">
@@ -349,20 +378,20 @@ export function App() {
 						</div>
 
 						{file && (
-							<div className="row gy-3">
+							<div className="row g-3">
 								<div className="col">
 									<button
 										type="button"
 										onClick={() => render(file)}
 										className="btn btn-light btn-lg w-100"
 									>
-										Render
+										{t('render', 'Render')}
 									</button>
 								</div>
 								{resultURL && (
 									<div className="col-auto">
 										<button type="button" onClick={download} className="btn btn-success btn-lg">
-											Download
+											{t('download', 'Download')}
 											<DownloadIcon />
 										</button>
 									</div>
@@ -385,3 +414,31 @@ export function App() {
 		</div>
 	);
 }
+
+const LanguageSwitcher = () => {
+	const { i18n } = useTranslation();
+
+	const changeLanguage = (lng: string) => {
+		i18n.changeLanguage(lng);
+		set_option('language', lng);
+	};
+
+	return (
+		<div className="App__langswitch d-flex">
+			<button
+				onClick={() => changeLanguage('en')}
+				className={`btn btn-sm me-2 ${
+					i18n.language.startsWith('en') ? 'btn-primary' : 'btn-outline-secondary'
+				}`}
+			>
+				EN
+			</button>
+			<button
+				onClick={() => changeLanguage('id')}
+				className={`btn btn-sm ${i18n.language.startsWith('id') ? 'btn-primary' : 'btn-outline-secondary'}`}
+			>
+				ID
+			</button>
+		</div>
+	);
+};

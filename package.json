@@ -4,20 +4,23 @@
   "version": "0.0.0",
   "source": "src/index.html",
   "scripts": {
-	"predev": "rimraf dist",
+    "predev": "rimraf dist",
     "dev": "parcel",
-	"prebuild": "npm run predev",
+    "prebuild": "npm run predev",
     "build": "parcel build --public-url .",
-	"predeploy": "npm run build",
+    "predeploy": "npm run build",
     "deploy": "gh-pages -d dist"
   },
   "dependencies": {
     "@babel/runtime": "^7.28.4",
     "@uiw/react-color": "^2.9.2",
+    "i18next": "^25.6.3",
+    "i18next-browser-languagedetector": "^8.2.0",
     "moment": "^2.30.1",
     "react": "^19.1.0",
     "react-color": "^2.19.3",
-    "react-dom": "^19.1.0"
+    "react-dom": "^19.1.0",
+    "react-i18next": "^16.3.5"
   },
   "devDependencies": {
     "@parcel/transformer-sass": "2.16.1",

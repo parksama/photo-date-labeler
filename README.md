@@ -6,6 +6,7 @@ A web-based application that allows you to add customizable date labels to your 
 
 - **Easy to Use**: Simply drag and drop an image or click to upload
 - **Automatic Date Extraction**: Automatically extracts date from image EXIF data or filename
+- **Multi-language Support**: Available in multiple languages with easy language switching
 - **Customizable Text**:
   - Multiple font options (including Digital-7, Orbitron, Quantico, and standard web fonts)
   - Customizable text and outline colors
@@ -70,6 +71,20 @@ The built files will be in the `dist/` directory.
 3. **Preview and Download**:
    - Click the "Render" button to apply changes
    - Click the "Download" button to save the labeled image
+
+## Available Languages
+
+The application supports the following languages:
+
+- English (en)
+- Bahasa Indonesia (id)
+
+### Adding a New Language
+
+1. Create a new JSON file in the `src/locales/` directory with the language code (e.g., `es.json` for Spanish)
+2. Add translations following the same structure as the existing language files
+3. Update the `i18n.ts` configuration to include the new language
+4. Add the language to the language switcher component
 
 ## Available Fonts
 
