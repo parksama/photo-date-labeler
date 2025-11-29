@@ -1,74 +1,18 @@
-import {
-	ChangeEventHandler,
-	DragEventHandler,
-	useEffect,
-	useMemo,
-	useRef,
-	useState,
-} from 'react';
+import { ChangeEventHandler, DragEventHandler, useEffect, useMemo, useRef, useState } from 'react';
 import './App.scss';
 import { ExifStatic } from 'exif-js';
 import type { Moment } from 'moment';
 import { Sketch } from '@uiw/react-color';
 import DownloadIcon from './img/download.svg';
-
-console.log(DownloadIcon);
+import { canvas_to_blob, get_option, months_to_text, set_option } from './helpers';
 
 declare var EXIF: ExifStatic;
 declare var moment: (date: any) => Moment;
 declare var init_zoom: (el: HTMLDivElement, options: Object) => void;
 
-const OPTIONS_PREFIX = 'photolabel_';
 const IMAGE_QUALITY = 0.9;
 
-function get_option(key: string, defaultValue: string) {
-	return localStorage.getItem(OPTIONS_PREFIX + key) || defaultValue;
-}
-
-function set_option(key: string, value: string) {
-	localStorage.setItem(OPTIONS_PREFIX + key, value);
-}
-
-function months_to_text(months: number) {
-	var years = Math.floor(months / 12);
-	var remainingMonths = months % 12;
-	var text = '';
-
-	if (years) {
-		text += `${years} TAHUN `;
-	}
-
-	if (remainingMonths) {
-		text += `${remainingMonths} BULAN`;
-	}
-
-	return text;
-}
-
-function canvas_to_blob(canvas: HTMLCanvasElement): Promise<Blob> {
-	return new Promise((resolve, reject) => {
-		canvas.toBlob(
-			(blob) => {
-				if (blob) {
-					resolve(blob);
-				}
-			},
-			'image/jpeg',
-			IMAGE_QUALITY
-		);
-	});
-}
-
-var availableFonts = [
-	'sans-serif',
-	'serif',
-	'monospace',
-	'cursive',
-	'fantasy',
-	'Digital-7',
-	'Orbitron',
-	'Quantico',
-];
+var availableFonts = ['sans-serif', 'serif', 'monospace', 'cursive', 'fantasy', 'Digital-7', 'Orbitron', 'Quantico'];
 
 export function App() {
 	const [file, setFile] = useState<File | null>(null);
@@ -98,19 +42,11 @@ export function App() {
 	const canvasRef = useRef<HTMLCanvasElement>(null);
 	const initialRef = useRef(false);
 
-	const [fillColor, setFillColor] = useState(
-		get_option('fillColor', '#ffffff')
-	);
-	const [strokeColor, setStrokeColor] = useState(
-		get_option('strokeColor', '#000000')
-	);
-	const [outline, setOutline] = useState(
-		get_option('outline', 'true') === 'true'
-	);
-	const [compareDate, setCompareDate] = useState(
-		get_option('compareDate', '2019-10-01')
-	);
-	const [font, setFont] = useState(get_option('font', 'sans-serif'));
+	const [fillColor, setFillColor] = useState(get_option('fillColor', '#ffffff'));
+	const [strokeColor, setStrokeColor] = useState(get_option('strokeColor', '#000000'));
+	const [outline, setOutline] = useState(get_option('outline', 'true') === 'true');
+	const [compareDate, setCompareDate] = useState(get_option('compareDate', '2019-10-01'));
+	const [font, setFont] = useState(get_option('font', 'Quantico'));
 
 	const [resultURL, setResultURL] = useState('');
 
@@ -122,9 +58,7 @@ export function App() {
 		var dateCompare = moment(compareDate);
 
 		var months = Math.abs(photoDate.diff(dateCompare, 'months'));
-		var suffix = months
-			? months_to_text(months)
-			: `${photoDate.diff(dateCompare, 'days')} HARI`;
+		var suffix = months ? months_to_text(months) : `${photoDate.diff(dateCompare, 'days')} HARI`;
 		var phototext = `${photoDate.format('DD-MM-YYYY')} - ${suffix}`;
 		return phototext;
 	}, [photoDate, compareDate]);
@@ -137,10 +71,7 @@ export function App() {
 		setFiledata(data);
 
 		var photodate = moment(
-			data.DateTimeOriginal?.replace(/:/g, '-').replace(/\s.*/, '') ||
-				regname?.[1] ||
-				file.lastModified ||
-				''
+			data.DateTimeOriginal?.replace(/:/g, '-').replace(/\s.*/, '') || regname?.[1] || file.lastModified || ''
 		);
 		setPhotoDate(photodate);
 	};
@@ -161,10 +92,7 @@ export function App() {
 					ctx.imageSmoothingQuality = 'high';
 					ctx.drawImage(img, 0, 0);
 
-					var basecalc = Math.min(
-						img.naturalWidth,
-						img.naturalHeight
-					);
+					var basecalc = Math.min(img.naturalWidth, img.naturalHeight);
 					var font_size = Math.ceil(basecalc * 0.04);
 					var padding = basecalc * 0.025;
 					var stroke = Math.ceil(font_size * 0.1);
@@ -177,25 +105,17 @@ export function App() {
 					if (outline) {
 						ctx.lineWidth = stroke;
 						ctx.strokeStyle = strokeColor;
-						ctx.strokeText(
-							phototext,
-							canvas.width / 2,
-							canvas.height - padding
-						);
+						ctx.strokeText(phototext, canvas.width / 2, canvas.height - padding);
 					}
 
 					ctx.fillStyle = fillColor;
-					ctx.fillText(
-						phototext,
-						canvas.width / 2,
-						canvas.height - padding
-					);
+					ctx.fillText(phototext, canvas.width / 2, canvas.height - padding);
 
 					if (resultURL) {
 						URL.revokeObjectURL(resultURL);
 					}
 
-					var blob = await canvas_to_blob(canvas);
+					var blob = await canvas_to_blob(canvas, IMAGE_QUALITY);
 					var url = URL.createObjectURL(blob);
 					setResultURL(url);
 
@@ -254,36 +174,25 @@ export function App() {
 			onDragLeave={() => setIsDragging(false)}
 		>
 			<div className="container py-5">
-				<h1 className="mb-4 xfont-digital-7">Photo Date Labeler</h1>
+				<h1 className="mb-4 font-Quantico">Photo Date Labeler</h1>
 				<div className="row gy-4">
 					<div className="col-md-6">
 						{!file ? (
 							<div
 								className={
 									'App__dropzone d-flex flex-column align-items-center justify-content-center' +
-									(isDragging
-										? ' App__dropzone--dragging'
-										: '')
+									(isDragging ? ' App__dropzone--dragging' : '')
 								}
 								onClick={() => fileinputref.current?.click()}
 							>
 								{isDragging ? (
 									<p>Drop the image here</p>
 								) : (
-									<p className="text-center">
-										Drag and drop or click here to select an
-										image.
-									</p>
+									<p className="text-center">Drag and drop or click here to select an image.</p>
 								)}
 							</div>
 						) : (
-							<div
-								className={
-									'App__wrapper' +
-									(resultURL ? ' shadow-lg' : '')
-								}
-								ref={wrapperRef}
-							>
+							<div className={'App__wrapper' + (resultURL ? ' shadow-lg' : '')} ref={wrapperRef}>
 								{resultURL && <img src={resultURL} />}
 							</div>
 						)}
@@ -291,25 +200,22 @@ export function App() {
 					<div className="col-md-6">
 						{filedata && (
 							<div className="App__fildata mb-3">
-								<div
-									className="accordion"
-									id="accordionExample"
-								>
+								<div className="accordion" id="accordionExample">
 									<div className="accordion-item">
 										<h2 className="accordion-header">
 											<button
 												className="accordion-button collapsed"
 												type="button"
 												data-bs-toggle="collapse"
-												data-bs-target="#collapseOne"
+												data-bs-target="#collapseEXIF"
 												aria-expanded="true"
-												aria-controls="collapseOne"
+												aria-controls="collapseEXIF"
 											>
 												EXIF Data
 											</button>
 										</h2>
 										<div
-											id="collapseOne"
+											id="collapseEXIF"
 											className="accordion-collapse collapse"
 											data-bs-parent="#accordionExample"
 										>
@@ -321,11 +227,7 @@ export function App() {
 													overflowY: 'auto',
 												}}
 											>
-												{JSON.stringify(
-													filedata,
-													null,
-													2
-												)}
+												{JSON.stringify(filedata, null, 2)}
 											</div>
 										</div>
 									</div>
@@ -336,41 +238,26 @@ export function App() {
 						<div className="row">
 							<div className="col">
 								<div className="mb-3">
-									<label
-										htmlFor="photoDate"
-										className="form-label"
-									>
+									<label htmlFor="photoDate" className="form-label">
 										Photo Date
 									</label>
 									<input
 										type="date"
-										value={
-											photoDate?.format('YYYY-MM-DD') ||
-											''
-										}
-										onChange={(event) =>
-											setPhotoDate(
-												moment(event.target.value)
-											)
-										}
+										value={photoDate?.format('YYYY-MM-DD') || ''}
+										onChange={(event) => setPhotoDate(moment(event.target.value))}
 										className="form-control"
 									/>
 								</div>
 							</div>
 							<div className="col">
 								<div className="mb-3">
-									<label
-										htmlFor="compareDate"
-										className="form-label"
-									>
+									<label htmlFor="compareDate" className="form-label">
 										Compare Date
 									</label>
 									<input
 										type="date"
 										value={compareDate}
-										onChange={(event) =>
-											setCompareDate(event.target.value)
-										}
+										onChange={(event) => setCompareDate(event.target.value)}
 										className="form-control"
 										id="compareDate"
 									/>
@@ -381,10 +268,7 @@ export function App() {
 						<div className="row">
 							<div className="col">
 								<div className="mb-3">
-									<label
-										htmlFor="color"
-										className="form-label"
-									>
+									<label htmlFor="color" className="form-label">
 										Text Color
 									</label>
 									<div>
@@ -405,15 +289,10 @@ export function App() {
 											className="form-check-input"
 											type="checkbox"
 											checked={outline}
-											onChange={(event) =>
-												setOutline(event.target.checked)
-											}
+											onChange={(event) => setOutline(event.target.checked)}
 											id="outline"
 										/>
-										<label
-											className="form-check-label"
-											htmlFor="outline"
-										>
+										<label className="form-check-label" htmlFor="outline">
 											Text Outline
 										</label>
 									</div>
@@ -421,9 +300,7 @@ export function App() {
 										<Sketch
 											color={strokeColor}
 											disableAlpha
-											onChange={(color) =>
-												setStrokeColor(color.hex)
-											}
+											onChange={(color) => setStrokeColor(color.hex)}
 										/>
 									)}
 								</div>
@@ -438,9 +315,7 @@ export function App() {
 								<div className="col">
 									<select
 										value={font}
-										onChange={(event) =>
-											setFont(event.target.value)
-										}
+										onChange={(event) => setFont(event.target.value)}
 										id="font"
 										className="form-select"
 									>
@@ -453,8 +328,7 @@ export function App() {
 								</div>
 								<div className="col">
 									<div style={{ fontFamily: font }}>
-										{photoText ||
-											'Lorem ipsum dolor - 1234567890'}
+										{photoText || 'Lorem ipsum dolor - 1234567890'}
 									</div>
 								</div>
 							</div>
@@ -473,11 +347,7 @@ export function App() {
 								</div>
 								{resultURL && (
 									<div className="col-auto">
-										<button
-											type="button"
-											onClick={download}
-											className="btn btn-success btn-lg"
-										>
+										<button type="button" onClick={download} className="btn btn-success btn-lg">
 											Download
 											<DownloadIcon />
 										</button>

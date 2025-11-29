@@ -34,8 +34,16 @@ img {
 	height: auto;
 }
 
-.font-digital-7 {
-	font-family: 'Digital-7';
+// .font-digital-7 {
+// 	font-family: 'Digital-7';
+// }
+
+$fonts: 'sans-serif', 'serif', 'monospace', 'cursive', 'fantasy', 'Digital-7', 'Orbitron', 'Quantico';
+
+@each $font in $fonts {
+	.font-#{$font} {
+		font-family: $font;
+	}
 }
 
 .btn {
